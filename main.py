@@ -3,6 +3,7 @@ import json
 import time
 
 
+#return subject of given message. This is no longer used since we are doing batch API calls
 def retsubject(message):
     # print(message['id'])
     #messageResource = sevice.users().messages().get(userId="me", id=message['id']).execute()
@@ -23,6 +24,7 @@ def retsubject(message):
 #             subject = retsubject(message)
 #             print(subject)
 
+#Function to search for emails based on query string
 def search_messages(service, query, apply_label_ids, search_label_ids):
     result = service.users().messages().list(userId='me', q=query, labelIds=search_label_ids).execute()
     messages = []
@@ -45,7 +47,7 @@ def search_messages(service, query, apply_label_ids, search_label_ids):
                 print("Processed :" , processed)
             messages = []
 
-
+#Function to find all emails with no subject and apply label using batch API calls
 def mark_as_label(service, apply_label_ids, messages_to_mark):
     nosubmessages = []
 
@@ -85,6 +87,7 @@ def mark_as_label(service, apply_label_ids, messages_to_mark):
     # 'ids': [msg['id'] for msg in messages_to_mark],
 
 
+#Return label code for label_id string
 def label_id(service, label_id_string):
     results = sevice.users().labels().list(userId='me').execute()
     labels = results.get('labels', [])
@@ -96,6 +99,8 @@ def label_id(service, label_id_string):
                 return label['id']
 
 
+#Main code begins here
+#Change the path to downloaded client_secret.json file path
 Client_File = r'C:\Users\yaman\Downloads\client_secret.json'
 Api_Name = 'gmail'
 Api_Version = 'v1'
@@ -107,6 +112,7 @@ start_time = time.time()
 sevice = create_service(Client_File, Api_Name, Api_Version, SCOPES)
 xyz = sevice.users().getProfile(userId='me').execute()
 print(xyz)
+#Change query string to select only emails between dates or any other GMAIL filter query string
 query_string = 'has:attachment After:2016/12/31 Before:2021/01/01'
 label_id_string = 'NOSUBJECT'
 mylabelid = label_id(sevice, label_id_string)
